@@ -22,6 +22,7 @@ type MongoDB struct {
 	Password     string `yaml:"db_pass"`
 	Port         string `yaml:"db_port"`
 	DatabaseName string `yaml:"db_database_name"`
+	AuthDBName   string `yaml:"db_auth_name"`
 	Uri          string `yaml:"url"`
 }
 

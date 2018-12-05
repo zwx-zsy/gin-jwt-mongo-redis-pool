@@ -23,7 +23,7 @@ func Login(c *gin.Context) {
 	var jsons LoginParam
 	if err := c.ShouldBindJSON(&jsons); err == nil {
 		result := M.Person{}
-		err := M.Persons(c).Find(bson.M{"Name": jsons.User}).One(&result)
+		err := M.Persons().Find(bson.M{"Name": jsons.User}).One(&result)
 		if err != nil {
 			switch err {
 			case mgo.ErrNotFound:
@@ -59,16 +59,16 @@ func generateToken(c *gin.Context, user string) {
 		[]byte("www.vcoding.com"),
 	}
 
-	value, _ := c.Get(Lib.CONFKEY)
+	//value, _ := c.Get(Lib.CONFKEY)
 
 	claims := Lib.CustomClaims{
 		Payload: Lib.Payload{
 			user,
 			false},
 		StandardClaims: Jwtgo.StandardClaims{
-			NotBefore: int64(time.Now().Unix() + value.(*Lib.Yaml).JwtConf.Notbefore), // 签名生效时间
-			ExpiresAt: int64(time.Now().Unix() + value.(*Lib.Yaml).JwtConf.Exptime),   // 过期时间 一小时
-			Issuer:    value.(*Lib.Yaml).JwtConf.Issuer,                               //签名的发行者
+			NotBefore: int64(time.Now().Unix() + Lib.ServerConf.JwtConf.Notbefore), // 签名生效时间
+			ExpiresAt: int64(time.Now().Unix() + Lib.ServerConf.JwtConf.Exptime),   // 过期时间 一小时
+			Issuer:    Lib.ServerConf.JwtConf.Issuer,                               //签名的发行者
 		},
 	}
 

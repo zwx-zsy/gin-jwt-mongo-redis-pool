@@ -27,15 +27,15 @@ func HelloServer(c *gin.Context) {
 		payload = claims.Payload
 	}
 	document := M.Person{Name: payload.Name, PassWord: payload.Name}
-	errs := M.Persons(c).Insert(&document)
+	errs := M.Persons().Insert(&document)
 	if errs != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError,gin.H{"code":http.StatusInternalServerError,
-			"msg":http.StatusText(http.StatusInternalServerError)})
-	}else{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
+			"msg": http.StatusText(http.StatusInternalServerError)})
+	} else {
 		c.JSON(200, gin.H{
-			"code":    200,
-			"msg": "success",
-			"data":    fmt.Sprintf("Hello %s !",payload.Name),
+			"code": 200,
+			"msg":  "success",
+			"data": fmt.Sprintf("Hello %s !", payload.Name),
 		})
 	}
 }
