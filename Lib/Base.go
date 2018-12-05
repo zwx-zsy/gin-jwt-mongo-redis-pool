@@ -12,7 +12,6 @@ type Yaml struct {
 	RedisConn string `yaml:"redisConn"`
 }
 
-
 type MongoDB struct {
 	User string `yaml:"db_user"`
 	Host string `yaml:"db_host"`
