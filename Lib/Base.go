@@ -1,5 +1,7 @@
 package Lib
 
+import "fmt"
+
 const (
 	CONFPATH string = "/septnet/config/conf.yaml" // 配置文件地址
 	CONFKEY  string = "Config"                    //配置文件的key
@@ -14,6 +16,7 @@ type Yaml struct {
 	RedisConf Redis   `yaml:"redis"`
 	RedisConn string  `yaml:"redisConn"`
 	JwtConf   JwtConf `yaml:"JwtConf"`
+	WeChat    WeChats `yaml:"wechat"`
 }
 
 type MongoDB struct {
@@ -32,4 +35,13 @@ type JwtConf struct {
 	Notbefore int64  `yaml:"notbefore"`
 }
 
+type WeChats struct {
+	APPID     string `yaml:"APPID"`
+	APPSECRET string `yaml:"APPSECRET"`
+}
+
 //end
+
+func (this *WeChats) CodeUrl(code string) string {
+	return fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%v&secret=%v&js_code=%v&grant_type=authorization_code", this.APPID, this.APPSECRET, code)
+}

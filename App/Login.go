@@ -3,11 +3,12 @@ package Api
 import (
 	"TimeLine/Lib"
 	M "TimeLine/Model"
+	"encoding/json"
 	Jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -16,6 +17,12 @@ import (
 type LoginParam struct {
 	User     string `form:"user" json:"user" binding:"-"`
 	Password string `form:"password" json:"password" binding:"required"`
+}
+
+//微信 code登录
+
+type WeixinCode struct {
+	Code string `form:"code" json:"code" binding:"required"`
 }
 
 //登录操作
@@ -39,7 +46,7 @@ func Login(c *gin.Context) {
 				})
 			}
 		} else {
-			if jsons.User == result.Name && jsons.Password == result.PassWord {
+			if jsons.User == result.NickName && jsons.Password == result.Birthday {
 				generateToken(c, jsons.User)
 			} else {
 				c.JSON(http.StatusOK, gin.H{
@@ -81,11 +88,69 @@ func generateToken(c *gin.Context, user string) {
 	} else {
 
 		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"msg":  "登录成功！",
+			"code": http.StatusOK,
+			"msg":  http.StatusText(http.StatusOK),
 			"data": token})
 		return
 
 	}
 
+}
+
+type wxOpenid struct {
+	Sessionkey string `json:"session_key"`
+	Openid     string `json:"openid"`
+	Errcode    int32  `json:"errcode"`
+	Errmsg     string `json:"errmsg"`
+}
+
+//code换 openid
+func (wxc *WeixinCode) codetoopenid() (res *wxOpenid, e error) {
+	client := &http.Client{}
+
+	//生成要访问的url
+	wechat := Lib.ServerConf.WeChat
+	url := wechat.CodeUrl(wxc.Code)
+	//提交请求
+	reqest, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		panic(err)
+	}
+
+	//处理返回结果
+	response, _ := client.Do(reqest)
+	//将结果定位到标准输出 也可以直接打印出来 或者定位到其他地方进行相应的处理
+	//body, _ := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
+	body, _ := ioutil.ReadAll(response.Body)
+	resp := &wxOpenid{}
+	err = json.Unmarshal(body, resp)
+	return &wxOpenid{
+		resp.Sessionkey,
+		resp.Openid,
+		resp.Errcode,
+		resp.Errmsg}, err
+}
+
+func Wechat(ctx *gin.Context) {
+	weixincode := WeixinCode{}
+	if err := ctx.ShouldBindJSON(&weixincode); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest,
+			gin.H{"code": http.StatusBadRequest, "msg": http.StatusText(http.StatusBadRequest)})
+	} else {
+		body, err := weixincode.codetoopenid()
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError,
+				gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
+		} else {
+			if body.Errcode > 0 {
+				ctx.AbortWithStatusJSON(http.StatusInternalServerError,
+					gin.H{"code": body.Errcode, "msg": body.Errmsg})
+			} else {
+				generateToken(ctx, body.Sessionkey)
+			}
+		}
+
+	}
 }
