@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
+	strconv "strconv"
 )
 
 // 登录参数
@@ -32,14 +33,16 @@ func GetGrowthStandards(c *gin.Context) {
 	//if b {
 	//	payload = claims.Payload
 	//}
+	skip, _ := strconv.Atoi(c.Param("skip"))
+	limit, _ := strconv.Atoi(c.Param("limit"))
 	gs := []M.GrowthStandard{}
-	e := M.GrowthStandards().Find(bson.M{"Type": 0}).Skip(10).Limit(20).All(&gs)
+	e := M.GrowthStandards().Find(nil).Sort("Type", "Days").Skip(skip).Limit(limit).All(&gs)
 
 	if e != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
 			"msg": http.StatusText(http.StatusInternalServerError)})
 	} else {
-		c.JSON(200, gin.H{"code": 200, "msg": "success", "data": gs, "Total": len(gs)})
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": gs, "Total": len(gs)})
 	}
 
 }
@@ -50,11 +53,11 @@ func CreatePerson(ctx *gin.Context) {
 		result := M.Person{Id: bson.NewObjectId(), NickName: PersonP.NickName, Sex: PersonP.Sex, Birthday: PersonP.Birthday}
 		err := M.Persons().Insert(&result)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": 402, "msg": err.Error()})
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 		} else {
-			ctx.JSON(200, gin.H{"code": 200, "msg": "success", "data": result.Id})
+			ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result.Id})
 		}
 	} else {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": 402, "msg": err.Error()})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 	}
 }

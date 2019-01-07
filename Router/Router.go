@@ -17,7 +17,7 @@ func RegisterRouter(router *gin.Engine) {
 	//auth
 	//Auth_V1 := V1.Group("/", Lib.JWTAuth())
 	//Auth_V1.GET("/hello", Api.HelloServer)
-	V1.GET("/hellos", Api.GetGrowthStandards)
+	V1.GET("/hellos/:skip/:limit", Api.GetGrowthStandards)
 	V1.POST("/person/add", Api.CreatePerson)
 
 	//ignore auth

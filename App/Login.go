@@ -50,14 +50,14 @@ func Login(c *gin.Context) {
 				generateToken(c, jsons.User)
 			} else {
 				c.JSON(http.StatusOK, gin.H{
-					"code": 400,
+					"code": http.StatusBadRequest,
 					"msg":  "用户名或密码错误！",
 				})
 			}
 		}
 
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"code": 402, "msg": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 	}
 }
 
@@ -81,7 +81,7 @@ func generateToken(c *gin.Context, user string) {
 
 	if token, err := j.CreateToken(claims); err != nil {
 		c.JSON(http.StatusOK, gin.H{
-			"code": 500,
+			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
 		return
@@ -108,7 +108,7 @@ type wxOpenid struct {
 func (wxc *WeixinCode) codetoopenid() (res *wxOpenid, e error) {
 	client := &http.Client{}
 
-	//生成要访问的url
+	//get url
 	wechat := Lib.ServerConf.WeChat
 	url := wechat.CodeUrl(wxc.Code)
 	//提交请求
@@ -134,6 +134,9 @@ func (wxc *WeixinCode) codetoopenid() (res *wxOpenid, e error) {
 }
 
 func Wechat(ctx *gin.Context) {
+	/**
+	微信方式登录
+	**/
 	weixincode := WeixinCode{}
 	if err := ctx.ShouldBindJSON(&weixincode); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest,
@@ -145,7 +148,7 @@ func Wechat(ctx *gin.Context) {
 				gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
 		} else {
 			if body.Errcode > 0 {
-				ctx.AbortWithStatusJSON(http.StatusInternalServerError,
+				ctx.AbortWithStatusJSON(http.StatusOK,
 					gin.H{"code": body.Errcode, "msg": body.Errmsg})
 			} else {
 				generateToken(ctx, body.Sessionkey)

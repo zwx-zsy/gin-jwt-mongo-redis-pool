@@ -3,9 +3,9 @@ package main
 import (
 	"TimeLine/Lib"
 	"TimeLine/Router"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
-
 
 func main() {
 
@@ -14,7 +14,7 @@ func main() {
 	router := gin.New()
 	//获取配置文件配置信息
 
-	Lib.LoadConfig(router,Lib.CONFPATH)
+	Lib.LoadConfig(router, Lib.CONFPATH)
 	//实例化数据库操作
 
 	Lib.Dial(router)
@@ -25,5 +25,5 @@ func main() {
 
 	// Registered routing
 	Router.RegisterRouter(router)
-	router.Run(":8080")
+	router.Run(fmt.Sprintf("%s:%s", Lib.ServerConf.Server.Host, Lib.ServerConf.Server.Port))
 }
