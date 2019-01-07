@@ -4,6 +4,6 @@ MAINTAINER  vincent
 WORKDIR /go/src/TimeLine
 COPY . .
 RUN mkdir /etc/tl
-COPY /etc/tl /etc/tl
+COPY /etc/tl/ /etc/tl/
 
 CMD ["/bin/bash", "build.sh"]
