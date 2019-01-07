@@ -9,6 +9,10 @@ services:
     #   - 443:443
     volumes:
       - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - timeline1
+      - timeline2
+      - timeline3
   timeline1:
     image: timeline
     container_name: timeline1
