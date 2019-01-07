@@ -2,6 +2,7 @@ FROM tlpk
 MAINTAINER  vincent
 #指定工作目录
 WORKDIR /go/src/TimeLine
+
 RUN mkdir /etc/tl
 COPY tl /etc/tl
 
