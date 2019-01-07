@@ -1,10 +1,10 @@
 FROM golang
 MAINTAINER  vincent
 #指定工作目录
-RUN mkdir /etc/tl
-ADD /etc/tl /etc/tl
-
 WORKDIR /go/src/TimeLine
+RUN mkdir /etc/tl
+COPY tl /etc/tl
+
 COPY . .
 
 CMD ["/bin/bash", "build.sh"]
