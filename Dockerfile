@@ -1,4 +1,4 @@
-FROM timeline_package
+FROM tlpk
 MAINTAINER  vincent
 #指定工作目录
 WORKDIR /go/src/TimeLine

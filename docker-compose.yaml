@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  timeline1:
+    image: timeline
+    container_name: timeline1
+    ports:
+      - "80801:8080"
+    entrypoint: ["/bin/bash", "build.sh"]
+
+  timeline2:
+    image: timeline
+    container_name: timeline2
+    ports:
+      - "80802:8080"
+    entrypoint: ["/bin/bash", "build.sh"]
+
+  timeline3:
+    image: timeline
+    container_name: timeline3
+    ports:
+      - "80803:8080"
+    entrypoint: ["/bin/bash", "build.sh"]
