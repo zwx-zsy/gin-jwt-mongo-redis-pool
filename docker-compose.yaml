@@ -9,7 +9,6 @@ services:
     #   - 443:443
     volumes:
       - ./nginx:/etc/nginx/conf.d
-    entrypoint: ["/bin/bash", "build.sh"]
   timeline1:
     image: timeline
     container_name: timeline1
