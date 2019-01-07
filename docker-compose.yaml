@@ -9,23 +9,24 @@ services:
     #   - 443:443
     volumes:
       - ./nginx:/etc/nginx/conf.d
+    entrypoint: ["/bin/bash", "build.sh"]
   timeline1:
     image: timeline
     container_name: timeline1
-    ports:
-      - "38001:8080"
+    expose:
+      - "8080"
     entrypoint: ["/bin/bash", "build.sh"]
 
   timeline2:
     image: timeline
     container_name: timeline2
-    ports:
-      - "38002:8080"
+    expose:
+      - "8080"
     entrypoint: ["/bin/bash", "build.sh"]
 
   timeline3:
     image: timeline
     container_name: timeline3
-    ports:
-      - "38003:8080"
+    expose:
+      - "8080"
     entrypoint: ["/bin/bash", "build.sh"]
