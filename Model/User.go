@@ -7,17 +7,17 @@ import (
 	"time"
 )
 
-const collectionName_User string = "bb_User"
+const CollectionName_User string = "bb_User"
 
 type User struct {
-	Id             bson.ObjectId `bson:"_id"`
-	WxOpenId       string        `json:"WxOpenId" bson:"WxOpenId""`
-	UserCode       string        `json:"UserCode" bson:"UserCode"`
-	PersonId       string        `json:"PersonId" bson:"PersonId"`
-	CreateDateTime *time.Time    `json:"CreateDateTime" bson:"CreateDateTime"`
+	Id             bson.ObjectId `bson:"_id,omitempty"`
+	WxOpenId       string        `bson:"WxOpenId"`
+	UserCode       string        `bson:"UserCode"`
+	PersonId       string        `bson:"PersonId"`
+	CreateDateTime time.Time     `bson:"CreateDateTime"`
 }
 
 func Users() *mgo.Collection {
 	//db, _ := c.Get("db")
-	return Lib.DB.C(collectionName_User)
+	return Lib.DB.C(CollectionName_User)
 }

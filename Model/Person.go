@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-const collectionName_Person = "bb_Person"
+const CollectionName_Person = "bb_Person"
 
 type Person struct {
-	Id             bson.ObjectId `bson:"_id"`
+	Id             bson.ObjectId `bson:"_id,omitempty"`
 	NickName       string        `json:"Nickname" bson:"NickName"`
 	Sex            int           `json:"Sex" bson:"Sex"`
 	Birthday       string        `json:"Birthday" bson:"Birthday"`
@@ -23,5 +23,5 @@ type Men []Person
 
 func Persons() *mgo.Collection {
 	//db, _ := c.Get("db")
-	return Lib.DB.C(collectionName_Person)
+	return Lib.DB.C(CollectionName_Person)
 }

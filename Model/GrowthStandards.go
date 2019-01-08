@@ -6,7 +6,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-const collectionName_GrowthStandard = "bb_GrowthStandards"
+const CollectionName_GrowthStandard = "bb_GrowthStandards"
 
 type GrowthStandard struct {
 	Id      bson.ObjectId `bson:"_id"`
@@ -18,5 +18,5 @@ type GrowthStandard struct {
 
 func GrowthStandards() *mgo.Collection {
 	//db, _ := c.Get("db")
-	return Lib.DB.C(collectionName_GrowthStandard)
+	return Lib.DB.C(CollectionName_GrowthStandard)
 }

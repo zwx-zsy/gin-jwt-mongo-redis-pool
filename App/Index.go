@@ -60,12 +60,13 @@ func CreatePerson(ctx *gin.Context) {
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 		} else {
-			//user := M.User{WxOpenId: PersonP.OpenId}
-			upsert, err := M.Users().Upsert(bson.M{"WxOpenId": PersonP.OpenId}, bson.M{"WxOpenId": PersonP.OpenId})
+			user := M.User{WxOpenId: PersonP.OpenId, PersonId: result.Id.Hex()}
+			ups, err := M.Users().Upsert(bson.M{"WxOpenId": PersonP.OpenId}, user)
 			if err != nil {
+				defer M.Rollback(M.CollectionName_Person, result.Id)
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
 			} else {
-				ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": upsert.UpsertedId})
+				ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": ups.UpsertedId})
 			}
 
 		}
