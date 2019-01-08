@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	//gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.DebugMode)
 	// 初始化服务
 	router := gin.New()
 	//获取配置文件配置信息

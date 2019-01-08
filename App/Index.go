@@ -5,7 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
-	strconv "strconv"
+	"strconv"
+	"time"
 )
 
 // 登录参数
@@ -13,6 +14,9 @@ type PersonParam struct {
 	NickName string `form:"nickname" json:"nickname" binding:"required"`
 	Sex      int    `form:"sex" json:"sex" binding:"-"`
 	Birthday string `form:"birthday" json:"birthday" binding:"required"`
+	Born     int    `form:"born" json:"born" binding:"-"`
+	Role     int    `form:"role" json:"role" binding:"-"`
+	OpenId   string `form:"openid" json:"openid" binding:"required"`
 }
 
 func GetGrowthStandards(c *gin.Context) {
@@ -50,12 +54,20 @@ func GetGrowthStandards(c *gin.Context) {
 func CreatePerson(ctx *gin.Context) {
 	var PersonP PersonParam
 	if err := ctx.ShouldBindJSON(&PersonP); err == nil {
-		result := M.Person{Id: bson.NewObjectId(), NickName: PersonP.NickName, Sex: PersonP.Sex, Birthday: PersonP.Birthday}
+		result := M.Person{Id: bson.NewObjectId(), NickName: PersonP.NickName,
+			Sex: PersonP.Sex, Birthday: PersonP.Birthday, Born: PersonP.Born, Role: PersonP.Role, CreateDateTime: time.Now()}
 		err := M.Persons().Insert(&result)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 		} else {
-			ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result.Id})
+			//user := M.User{WxOpenId: PersonP.OpenId}
+			upsert, err := M.Users().Upsert(bson.M{"WxOpenId": PersonP.OpenId}, bson.M{"WxOpenId": PersonP.OpenId})
+			if err != nil {
+				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
+			} else {
+				ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": upsert.UpsertedId})
+			}
+
 		}
 	} else {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})

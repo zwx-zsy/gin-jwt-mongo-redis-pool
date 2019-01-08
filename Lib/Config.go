@@ -47,7 +47,7 @@ func LoadConfig(router *gin.Engine, confPath string) {
 
 func SetLog() {
 	gin.DisableConsoleColor()
-	//gin.ErrorLogger()
+	gin.ErrorLogger()
 
 	// Logging to a file.
 	f, _ := os.Create("server.log")
