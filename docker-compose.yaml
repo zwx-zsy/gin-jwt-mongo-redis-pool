@@ -13,6 +13,9 @@ services:
       - timeline1
       - timeline2
       - timeline3
+      - timeline4
+      - timeline5
+      - timeline6
   timeline1:
     image: timeline
     container_name: timeline1
@@ -30,6 +33,25 @@ services:
   timeline3:
     image: timeline
     container_name: timeline3
+    expose:
+      - "8080"
+    entrypoint: ["/bin/bash", "build.sh"]
+
+  timeline4:
+    image: timeline
+    container_name: timeline4
+    expose:
+      - "8080"
+    entrypoint: ["/bin/bash", "build.sh"]
+  timeline5:
+    image: timeline
+    container_name: timeline5
+    expose:
+      - "8080"
+    entrypoint: ["/bin/bash", "build.sh"]
+  timeline6:
+    image: timeline
+    container_name: timeline6
     expose:
       - "8080"
     entrypoint: ["/bin/bash", "build.sh"]
