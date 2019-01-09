@@ -1,11 +1,14 @@
 package Lib
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 const (
-	//CONFPATH string = "/etc/tl/conf.yaml" // 配置文件地址
-	CONFPATH string = "/septnet/config/conf.yaml" // 配置文件地址
-	CONFKEY  string = "Config"                    //配置文件的key
+	CONFPATH string = "/etc/tl/conf.yaml" // 配置文件地址
+	//CONFPATH string = "/septnet/config/conf.yaml" // 配置文件地址
+	CONFKEY string = "Config" //配置文件的key
 )
 
 //yaml的结构
@@ -50,4 +53,11 @@ type WeChats struct {
 
 func (this *WeChats) CodeUrl(code string) string {
 	return fmt.Sprintf("https://api.weixin.qq.com/sns/jscode2session?appid=%v&secret=%v&js_code=%v&grant_type=authorization_code", this.APPID, this.APPSECRET, code)
+}
+
+//计算二个时间的相差多少天
+func TimeSub(t1, t2 time.Time) int {
+	t1 = time.Date(t1.Year(), t1.Month(), t1.Day(), 0, 0, 0, 0, time.Local)
+	t2 = time.Date(t2.Year(), t2.Month(), t2.Day(), 0, 0, 0, 0, time.Local)
+	return int(t1.Sub(t2).Hours() / 24)
 }
