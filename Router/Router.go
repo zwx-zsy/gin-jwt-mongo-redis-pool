@@ -21,6 +21,7 @@ func RegisterRouter(router *gin.Engine) {
 	Auth_V1.GET("/growthstandards/:skip/:limit", Api.GetGrowthStandards)
 	Auth_V1.POST("/person/add", Api.CreatePerson)
 	Auth_V1.GET("/userinfo", Api.GetUserInfo)
+	Auth_V1.GET("/persons", Api.GetPersonList)
 
 	//ignore auth
 	NotAuth_V1 := V1.Group("/")

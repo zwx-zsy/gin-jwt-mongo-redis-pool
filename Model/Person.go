@@ -16,6 +16,7 @@ type Person struct {
 	Birthday       string        `json:"Birthday" bson:"Birthday"`
 	Born           int           `json:"Born" bson:"Born"`
 	Role           int           `json:"Role" bson:"Role"`
+	OpenId         string        `json:"OpenId" bson:"OpenId"`
 	CreateDateTime time.Time     `json:"CreateDateTime,omitempty"bson:"CreateDateTime"`
 }
 
