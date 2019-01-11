@@ -61,7 +61,7 @@ func Login(c *gin.Context) {
 	}
 }
 
-func generateToken(c *gin.Context, payload Lib.Payload) {
+func generateToken(c *gin.Context, payload Lib.Payload) string {
 	j := &Lib.JWT{
 		[]byte(Lib.SignKey),
 	}
@@ -79,15 +79,13 @@ func generateToken(c *gin.Context, payload Lib.Payload) {
 			"code": http.StatusInternalServerError,
 			"msg":  err.Error(),
 		})
-		return
+		return ""
 	} else {
-
-		c.JSON(http.StatusOK, gin.H{
-			"code": http.StatusOK,
-			"msg":  http.StatusText(http.StatusOK),
-			"data": token})
-		return
-
+		//c.JSON(http.StatusOK, gin.H{
+		//	"code": http.StatusOK,
+		//	"msg":  http.StatusText(http.StatusOK),
+		//	"data": token})
+		return token
 	}
 
 }
@@ -146,7 +144,22 @@ func Wechat(ctx *gin.Context) {
 				ctx.AbortWithStatusJSON(http.StatusOK,
 					gin.H{"code": body.Errcode, "msg": body.Errmsg})
 			} else {
-				generateToken(ctx, Lib.Payload{OpenId: body.Openid})
+				userone := &M.User{}
+				err := M.Users().Find(bson.M{"WxOpenId": body.Openid}).One(&userone)
+				if err != nil {
+					if userone.WxOpenId == "" {
+						userone.WxOpenId = body.Openid
+						userone.Id = bson.NewObjectId()
+						userone.CreateDateTime = time.Now()
+						M.Users().Insert(userone)
+					}
+				}
+				token := generateToken(ctx, Lib.Payload{OpenId: body.Openid})
+				ctx.JSON(http.StatusOK, gin.H{
+					"code":      http.StatusOK,
+					"msg":       http.StatusText(http.StatusOK),
+					"data":      token,
+					"personmid": userone.PersonId})
 			}
 		}
 	}
