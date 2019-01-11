@@ -47,7 +47,7 @@ func Login(c *gin.Context) {
 			}
 		} else {
 			if jsons.User == result.NickName && jsons.Password == result.Birthday {
-				generateToken(c, jsons.User)
+				generateToken(c, Lib.Payload{Name: jsons.User})
 			} else {
 				c.JSON(http.StatusOK, gin.H{
 					"code": http.StatusBadRequest,
@@ -61,20 +61,15 @@ func Login(c *gin.Context) {
 	}
 }
 
-func generateToken(c *gin.Context, user string) {
+func generateToken(c *gin.Context, payload Lib.Payload) {
 	j := &Lib.JWT{
-		[]byte("www.vcoding.com"),
+		[]byte(Lib.SignKey),
 	}
-
-	//value, _ := c.Get(Lib.CONFKEY)
-
 	claims := Lib.CustomClaims{
-		Payload: Lib.Payload{
-			user,
-			false},
+		Payload: payload,
 		StandardClaims: Jwtgo.StandardClaims{
 			NotBefore: int64(time.Now().Unix() + Lib.ServerConf.JwtConf.Notbefore), // 签名生效时间
-			ExpiresAt: int64(time.Now().Unix() + Lib.ServerConf.JwtConf.Exptime),   // 过期时间 一小时
+			ExpiresAt: int64(time.Now().Unix() + Lib.ServerConf.JwtConf.Exptime),   // 过期时间 一小时*24
 			Issuer:    Lib.ServerConf.JwtConf.Issuer,                               //签名的发行者
 		},
 	}
@@ -151,9 +146,8 @@ func Wechat(ctx *gin.Context) {
 				ctx.AbortWithStatusJSON(http.StatusOK,
 					gin.H{"code": body.Errcode, "msg": body.Errmsg})
 			} else {
-				generateToken(ctx, body.Sessionkey)
+				generateToken(ctx, Lib.Payload{OpenId: body.Openid})
 			}
 		}
-
 	}
 }

@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-
 func GetToken(token string) (string, error) {
 	const prefix = "Bearer "
 	if !strings.HasPrefix(token, prefix) {
@@ -25,12 +24,12 @@ func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//Models.Persons(c).Insert(&Models.Person{Name:"test",Phone:"18856988766"})
 		TokenString := c.Request.Header.Get("Authorization")
-		token,err := GetToken(TokenString)
-		if err!=nil {
-			fmt.Println("token",token)
+		token, err := GetToken(TokenString)
+		if err != nil {
+			fmt.Println("token", token)
 			c.JSON(http.StatusOK, gin.H{
 				"code": 401,
-				"msg":    "请求未携带token，无权限访问",
+				"msg":  "请求未携带token，无权限访问",
 			})
 			c.Abort()
 			return
@@ -43,14 +42,14 @@ func JWTAuth() gin.HandlerFunc {
 			if err == TokenExpired {
 				c.JSON(http.StatusOK, gin.H{
 					"code": 403,
-					"msg":    "授权已过期",
+					"msg":  "授权已过期",
 				})
 				c.Abort()
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{
 				"code": 403,
-				"msg":    err.Error(),
+				"msg":  err.Error(),
 			})
 			c.Abort()
 			return
@@ -75,8 +74,9 @@ var (
 )
 
 type Payload struct {
-	Name string `json:"name"`
-	Admin bool `json:"admin"`
+	Name   string `json:"name"`
+	OpenId string `json:"open_id"`
+	Admin  bool   `json:"admin"`
 }
 
 // 载荷，可以加一些自己需要的信息
@@ -104,11 +104,11 @@ func SetSignKey(key string) string {
 }
 
 //获取 token中的 payload
-func GetPayLoad(c *gin.Context) (*CustomClaims,bool){
-	if value, exists := c.Get("claims");exists{
-		return value.(*CustomClaims),true
-	}else{
-		return nil,false
+func GetPayLoad(c *gin.Context) (*CustomClaims, bool) {
+	if value, exists := c.Get("claims"); exists {
+		return value.(*CustomClaims), true
+	} else {
+		return nil, false
 	}
 }
 
@@ -119,7 +119,7 @@ func (j *JWT) CreateToken(claims CustomClaims) (string, error) {
 }
 
 // 解析Token
-func (j *JWT) ParseToken(tokenString string) (*CustomClaims, error) {
+func (j *JWT) ParseToken(tokenString string) (CC *CustomClaims, err error) {
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return j.SigningKey, nil
 	})
@@ -161,4 +161,3 @@ func (j *JWT) RefreshToken(tokenString string) (string, error) {
 	}
 	return "", TokenInvalid
 }
-

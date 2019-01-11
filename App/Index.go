@@ -17,7 +17,6 @@ type PersonParam struct {
 	Birthday string `form:"birthday" json:"birthday" binding:"required"`
 	Born     int    `form:"born" json:"born" binding:"-"`
 	Role     int    `form:"role" json:"role" binding:"-"`
-	OpenId   string `form:"openid" json:"openid" binding:"required"`
 }
 
 func GetGrowthStandards(c *gin.Context) {
@@ -34,10 +33,6 @@ func GetGrowthStandards(c *gin.Context) {
 	//	//获取到 redis中的指定的 key的 value值 做对应的操作
 	//}
 	//claims, b := Lib.GetPayLoad(c)
-	//payload := Lib.CustomClaims{}.Payload
-	//if b {
-	//	payload = claims.Payload
-	//}
 	skip, _ := strconv.Atoi(c.Param("skip"))
 	limit, _ := strconv.Atoi(c.Param("limit"))
 	gs := []M.GrowthStandard{}
@@ -49,10 +44,10 @@ func GetGrowthStandards(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": gs, "Total": len(gs)})
 	}
-
 }
 
 func CreatePerson(ctx *gin.Context) {
+	claims, _ := Lib.GetPayLoad(ctx)
 	var PersonP PersonParam
 	if err := ctx.ShouldBindJSON(&PersonP); err == nil {
 		result := M.Person{Id: bson.NewObjectId(), NickName: PersonP.NickName,
@@ -62,12 +57,12 @@ func CreatePerson(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
 		} else {
 			userone := &M.User{}
-			user := M.User{WxOpenId: PersonP.OpenId, PersonId: result.Id.Hex()}
-			err := M.Users().Find(bson.M{"WxOpenId": PersonP.OpenId}).One(&userone)
+			user := M.User{WxOpenId: claims.Payload.OpenId, PersonId: result.Id.Hex()}
+			err := M.Users().Find(bson.M{"WxOpenId": claims.Payload.OpenId}).One(&userone)
 			if err != nil {
 				user.CreateDateTime = time.Now()
 			}
-			ups, err := M.Users().Upsert(bson.M{"WxOpenId": PersonP.OpenId}, user)
+			ups, err := M.Users().Upsert(bson.M{"WxOpenId": claims.Payload.OpenId}, user)
 			if err != nil {
 				defer M.Rollback(M.CollectionName_Person, result.Id)
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
@@ -82,33 +77,25 @@ func CreatePerson(ctx *gin.Context) {
 
 //获取用户信息
 
-type UserInfo struct {
-	OpenId string `form:"openid" json:"openid" binding:"required"`
-}
-
 type UserResult struct {
 	User M.Person
 	Days int
 }
 
 func GetUserInfo(c *gin.Context) {
-	var userinfo UserInfo
-	if err := c.ShouldBindJSON(&userinfo); err == nil {
-		userone := &M.User{}
-		result := &UserResult{}
-		err := M.Users().Find(bson.M{"WxOpenId": userinfo.OpenId}).One(&userone)
-		if err != nil {
-			result.User = M.Person{}
-			result.Days = -1
-		} else {
-			loc, _ := time.LoadLocation("Local")
-			M.Persons().FindId(bson.ObjectIdHex(userone.PersonId)).One(&result.User)
-			toBeCharge := result.User.Birthday + " 00:00:00"
-			parse_str_time, _ := time.ParseInLocation("2006-01-02 15:04:05", toBeCharge, loc)
-			result.Days = Lib.TimeSub(time.Now(), parse_str_time)
-		}
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result})
+	claims, _ := Lib.GetPayLoad(c)
+	userone := &M.User{}
+	result := &UserResult{}
+	err := M.Users().Find(bson.M{"WxOpenId": claims.Payload.OpenId}).One(&userone)
+	if err != nil {
+		result.User = M.Person{}
+		result.Days = -1
 	} else {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": err.Error()})
+		loc, _ := time.LoadLocation("Local")
+		M.Persons().FindId(bson.ObjectIdHex(userone.PersonId)).One(&result.User)
+		toBeCharge := result.User.Birthday + " 00:00:00"
+		parse_str_time, _ := time.ParseInLocation("2006-01-02 15:04:05", toBeCharge, loc)
+		result.Days = Lib.TimeSub(time.Now(), parse_str_time)
 	}
+	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result})
 }
