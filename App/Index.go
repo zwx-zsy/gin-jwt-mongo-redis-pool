@@ -80,6 +80,7 @@ func CreatePerson(ctx *gin.Context) {
 type UserResult struct {
 	User M.Person
 	Days int
+	List []M.Person
 }
 
 func GetUserInfo(c *gin.Context) {
@@ -96,15 +97,27 @@ func GetUserInfo(c *gin.Context) {
 		}
 	} else {
 		loc, _ := time.LoadLocation("Local")
-		err := M.Persons().FindId(bson.ObjectIdHex(userone.PersonId)).One(&result.User)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": http.StatusText(http.StatusInternalServerError)})
+		if userone.PersonId != "" {
+			err := M.Persons().FindId(bson.ObjectIdHex(userone.PersonId)).One(&result.User)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": http.StatusText(http.StatusInternalServerError)})
+			}
+			toBeCharge := result.User.Birthday + " 00:00:00"
+			parse_str_time, _ := time.ParseInLocation("2006-01-02 15:04:05", toBeCharge, loc)
+			result.Days = Lib.TimeSub(time.Now(), parse_str_time)
 		}
-		toBeCharge := result.User.Birthday + " 00:00:00"
-		parse_str_time, _ := time.ParseInLocation("2006-01-02 15:04:05", toBeCharge, loc)
-		result.Days = Lib.TimeSub(time.Now(), parse_str_time)
 	}
-	c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result})
+	errs := M.Persons().Find(bson.M{"OpenId": claims.Payload.OpenId}).All(&result.List)
+	if errs != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
+			"msg": http.StatusText(http.StatusInternalServerError)})
+	} else {
+		if result.List == nil {
+			result.List = []M.Person{}
+		}
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result, "Total": len(result.List)})
+	}
+
 }
 
 func GetPersonList(c *gin.Context) {

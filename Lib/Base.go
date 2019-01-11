@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	CONFPATH string = "/etc/tl/conf.yaml" // 配置文件地址
-	//CONFPATH string = "/septnet/config/conf.yaml" // 配置文件地址
-	CONFKEY string = "Config" //配置文件的key
+	//CONFPATH string = "/etc/tl/conf.yaml" // 配置文件地址
+	CONFPATH string = "/septnet/config/conf.yaml" // 配置文件地址
+	CONFKEY  string = "Config"                    //配置文件的key
 )
 
 //yaml的结构
