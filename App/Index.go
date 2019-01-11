@@ -105,6 +105,9 @@ func GetUserInfo(c *gin.Context) {
 			toBeCharge := result.User.Birthday + " 00:00:00"
 			parse_str_time, _ := time.ParseInLocation("2006-01-02 15:04:05", toBeCharge, loc)
 			result.Days = Lib.TimeSub(time.Now(), parse_str_time)
+		} else {
+			result.User = M.Person{}
+			result.Days = -1
 		}
 	}
 	errs := M.Persons().Find(bson.M{"OpenId": claims.Payload.OpenId}).All(&result.List)
