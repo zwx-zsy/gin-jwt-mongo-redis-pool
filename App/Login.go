@@ -28,7 +28,7 @@ type WeixinCode struct {
 
 //登录操作
 func Login(c *gin.Context) {
-
+	//实例化登录参数
 	var jsons LoginParam
 	if err := c.ShouldBindJSON(&jsons); err == nil {
 		result := M.Person{}
