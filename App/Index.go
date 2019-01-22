@@ -21,19 +21,7 @@ type PersonParam struct {
 }
 
 func GetGrowthStandards(c * gin.Context) {
-    // if _, err: = Lib.Set(c, "testkey", "1234567890"); err != nil{
-        // c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
-                                                                       // "msg": http.StatusText(http.StatusInternalServerError)})
-        //
-        //}
-    // if replyS, err: = Lib.Get(c, "testkey"); err != nil{
-        // c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
-                                                                       // "msg": http.StatusText(http.StatusInternalServerError)})
-        // }else {
-        // fmt.Println(replyS)
-        // //获取到 redis中的指定的 key的 value值 做对应的操作
-            //}
-        // claims, b: = Lib.GetPayLoad(c)
+	// 获取成长标准说明
     skip, _: = strconv.Atoi(c.Param("skip"))
     limit, _: = strconv.Atoi(c.Param("limit"))
     gs: = []M.GrowthStandard{}
