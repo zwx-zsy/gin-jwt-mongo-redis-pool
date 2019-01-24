@@ -2,6 +2,7 @@ package Models
 
 import (
 	"TimeLine/Lib"
+
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -15,10 +16,14 @@ import (
 //	m.s()
 //}
 
-//
-func Rollback(collectionName string, id bson.ObjectId) {
+func Rollback(collectionName string, id bson.ObjectId) (removeid bson.ObjectId,err error){
 	//由于没有事务处理这个做一个撤销操作
-	Lib.DB.C(collectionName).RemoveId(id)
+
+	errs := Lib.DB.C(collectionName).RemoveId(id)
 	//log.Fatalf("%v",e)
-	//return removeId
+	if errs != nil{
+		return "",errs
+	}else {
+		return id,nil
+	}
 }

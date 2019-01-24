@@ -2,7 +2,8 @@ package Models
 
 import (
 	"TimeLine/Lib"
-	"gopkg.in/mgo.v2"
+
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -17,6 +18,5 @@ type GrowthStandard struct {
 }
 
 func GrowthStandards() *mgo.Collection {
-	//db, _ := c.Get("db")
 	return Lib.DB.C(CollectionName_GrowthStandard)
 }

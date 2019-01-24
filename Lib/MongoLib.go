@@ -2,9 +2,10 @@ package Lib
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gopkg.in/mgo.v2"
 	"log"
+
+	"github.com/gin-gonic/gin"
+	mgo "gopkg.in/mgo.v2"
 )
 
 var DB *mgo.Database
@@ -25,10 +26,8 @@ func NewMiddleware(session *mgo.Session) *Middleware {
 
 func (m *Middleware) Connect(c *gin.Context) {
 	s := m.session.Clone()
-	//db := s.DB("test")
 	DB = s.DB(ServerConf.DBConf.DatabaseName)
 	defer s.Close()
-	//c.Set("db", db)
 	c.Next()
 }
 

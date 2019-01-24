@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 	"time"
+
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 func GetToken(token string) (string, error) {
@@ -22,7 +23,6 @@ func GetToken(token string) (string, error) {
 // JWTAuth 中间件，检查token
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//Models.Persons(c).Insert(&Models.Person{Name:"test",Phone:"18856988766"})
 		TokenString := c.Request.Header.Get("Authorization")
 		token, err := GetToken(TokenString)
 		if err != nil {

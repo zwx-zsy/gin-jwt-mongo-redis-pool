@@ -2,9 +2,10 @@ package Models
 
 import (
 	"TimeLine/Lib"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"time"
+
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const CollectionName_Person = "bb_Person"
@@ -17,12 +18,11 @@ type Person struct {
 	Born           int           `json:"Born" bson:"Born"`
 	Role           int           `json:"Role" bson:"Role"`
 	OpenId         string        `json:"OpenId" bson:"OpenId"`
-	CreateDateTime time.Time     `json:"CreateDateTime,omitempty"bson:"CreateDateTime"`
+	CreateDateTime time.Time     `json:"CreateDateTime,omitempty" bson:"CreateDateTime"`
 }
 
 type Men []Person
 
 func Persons() *mgo.Collection {
-	//db, _ := c.Get("db")
 	return Lib.DB.C(CollectionName_Person)
 }

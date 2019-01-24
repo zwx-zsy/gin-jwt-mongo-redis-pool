@@ -2,9 +2,10 @@ package Models
 
 import (
 	"TimeLine/Lib"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"time"
+
+	mgo "gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const CollectionName_User string = "bb_User"
@@ -18,6 +19,5 @@ type User struct {
 }
 
 func Users() *mgo.Collection {
-	//db, _ := c.Get("db")
 	return Lib.DB.C(CollectionName_User)
 }

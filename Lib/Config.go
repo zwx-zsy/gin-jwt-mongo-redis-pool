@@ -1,12 +1,13 @@
 package Lib
 
 import (
-	"github.com/gin-gonic/gin"
-	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/gin-gonic/gin"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var ServerConf *Yaml
@@ -24,26 +25,6 @@ func LoadConfig(router *gin.Engine, confPath string) {
 	}
 	//router.Use(ServerConf.ReadConfig)
 }
-
-//func (conf *ServerConf)ReadConfig(c *gin.Context)  {
-//
-//	//c.Set(conf.ConfigKey, conf)
-//	c.Next()
-//}
-
-//func GetConfig() (config *Yaml) {
-//	//conf := &Yaml{}
-//	yamlFile, err := ioutil.ReadFile(CONFPATH)
-//	if err != nil {
-//		log.Fatal(err)
-//	}else {
-//		err = yaml.Unmarshal(yamlFile, ServerConf)
-//		if err!=nil{
-//			log.Fatal(err)
-//		}
-//	}
-//	return ServerConf
-//}
 
 func SetLog() {
 	gin.DisableConsoleColor()
