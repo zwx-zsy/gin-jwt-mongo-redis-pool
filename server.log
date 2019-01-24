@@ -1,3 +1,0 @@
-[GIN] 2019/01/22 - 16:48:13 | 404 |       1.083µs |       127.0.0.1 | POST     /api/v1/growthstandards/0/20
-[GIN] 2019/01/22 - 16:48:16 | 200 |     360.132µs |       127.0.0.1 | GET      /api/v1/growthstandards/0/20
-[GIN] 2019/01/22 - 16:48:46 | 200 |  141.523193ms |       127.0.0.1 | GET      /api/v1/growthstandards/0/20
