@@ -16,14 +16,14 @@ import (
 
 // 登录参数
 type LoginParam struct {
-	User     string `form: "user" json: "user" binding: "-"`
-	Password string `form: "password" json: "password" binding: "required"`
+	User     string `form:"user" json:"user" binding:"-"`
+	Password string `form:"password" json:"password" binding:"required"`
 }
 
 //微信 code登录
 
 type WeixinCode struct {
-	Code string `form: "code" json: "code" binding: "required"`
+	Code string `form:"code" json:"code" binding:"required"`
 }
 
 //登录操作
@@ -65,10 +65,11 @@ func Login(c *gin.Context) {
 
 func generateToken(c *gin.Context, payload Lib.Payload) string {
 	//set token
-
-	customjwt := &Lib.JWT{
-		[]byte(Lib.SignKey),
-	}
+	var customjwt Lib.JWT
+	// customjwt = &Lib.JWT{
+	// 	[]byte(Lib.SignKey),
+	// }
+	customjwt.SigningKey = []byte(Lib.SignKey)
 	claims := Lib.CustomClaims{
 		Payload: payload,
 		StandardClaims: Jwtgo.StandardClaims{
@@ -95,10 +96,10 @@ func generateToken(c *gin.Context, payload Lib.Payload) string {
 }
 
 type wxOpenid struct {
-	Sessionkey string `json: "session_key"`
-	Openid     string `json: "openid"`
-	Errcode    int32  `json: "errcode"`
-	Errmsg     string `json: "errmsg"`
+	Sessionkey string `json:"session_key"`
+	Openid     string `json:"openid"`
+	Errcode    int32  `json:"errcode"`
+	Errmsg     string `json:"errmsg"`
 }
 
 //code换 openid
@@ -116,11 +117,11 @@ func (wxc *WeixinCode) codetoopenid() (res *wxOpenid, e error) {
 	}
 
 	//处理返回结果
-	response, _ := client.Do(reqest)
+	responses, _ := client.Do(reqest)
 	//将结果定位到标准输出也可以直接打印出来 或者定位到其他地方进行相应的处理
 	//body, _ := ioutil.ReadAll(response.Body)
-	defer response.Body.Close()
-	body, _ := ioutil.ReadAll(response.Body)
+	body, _ := ioutil.ReadAll(responses.Body)
+	defer responses.Body.Close()
 	resp := &wxOpenid{}
 	err = json.Unmarshal(body, resp)
 	return &wxOpenid{

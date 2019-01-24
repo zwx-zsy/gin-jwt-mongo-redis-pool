@@ -1,8 +1,9 @@
 package Router
 
 import (
-	"TimeLine/App"
+	ApiRoute "TimeLine/App"
 	"TimeLine/Lib"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,15 +18,15 @@ func RegisterRouter(router *gin.Engine) {
 
 	//auth
 	Auth_V1 := V1.Group("/", Lib.JWTAuth())
-	//Auth_V1.GET("/hello", Api.HelloServer)
-	Auth_V1.GET("/growthstandards/:skip/:limit", Api.GetGrowthStandards)
-	Auth_V1.POST("/person/add", Api.CreatePerson)
-	Auth_V1.GET("/userinfo", Api.GetUserInfo)
-	Auth_V1.GET("/persons", Api.GetPersonList)
+	//Auth_V1.GET("/hello", ApiRoute.HelloServer)
+	Auth_V1.GET("/growthstandards/:skip/:limit", ApiRoute.GetGrowthStandards)
+	Auth_V1.POST("/person/add", ApiRoute.CreatePerson)
+	Auth_V1.GET("/userinfo", ApiRoute.GetUserInfo)
+	Auth_V1.GET("/persons", ApiRoute.GetPersonList)
 
 	//ignore auth
 	NotAuth_V1 := V1.Group("/")
-	NotAuth_V1.POST("/login", Api.Login)
-	NotAuth_V1.POST("/wxlogin", Api.Wechat)
+	NotAuth_V1.POST("/login", ApiRoute.Login)
+	NotAuth_V1.POST("/wxlogin", ApiRoute.Wechat)
 
 }

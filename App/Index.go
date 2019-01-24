@@ -14,11 +14,11 @@ import (
 
 // 登录参数
 type PersonParam struct {
-	NickName string `form: "nickname" json: "nickname" binding: "required"`
-	Sex      int    `form: "sex" json: "sex" binding: "-"`
-	Birthday string `form: "birthday" json: "birthday" binding: "required"`
-	Born     int    `form: "born" json: "born" binding: "-"`
-	Role     int    `form: "role" json: "role" binding: "-"`
+	NickName string `form:"nickname" json:"nickname" binding:"required"`
+	Sex      int    `form:"sex" json:"sex" binding:"-"`
+	Birthday string `form:"birthday" json:"birthday" binding:"required"`
+	Born     int    `form:"born" json:"born" binding:"-"`
+	Role     int    `form:"role" json:"role" binding:"-"`
 }
 
 func GetGrowthStandards(c *gin.Context) {
