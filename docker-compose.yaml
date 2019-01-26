@@ -5,8 +5,8 @@ services:
     image: nginx
     restart: always
     ports:
-      - 8080:80
-      - 8443:443
+      - 8081:80
+      - 8080:443
     volumes:
       - ./nginx:/etc/nginx/conf.d
     depends_on:
