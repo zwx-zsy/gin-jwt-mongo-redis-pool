@@ -4,12 +4,12 @@ import (
 	"TimeLine/Lib"
 	M "TimeLine/Model"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"gopkg.in/mgo.v2/bson"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
-	"gopkg.in/mgo.v2/bson"
 )
 
 // 登录参数
@@ -142,12 +142,31 @@ func GetNews(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.Param("limit"))
 	result := []M.Message{}
 	count, _ := M.Messages().Count()
-	err := M.Messages().Find(bson.M{}).Skip(skip).Limit(limit).All(&result)
+	err := M.Messages().Find(bson.M{}).Skip(skip).Limit(limit).Select(bson.M{"id": 1, "Title": 1, "CreateDateTime": 1}).All(&result)
+
+	r := rand.New(rand.NewSource(100000))
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
 			"msg": http.StatusText(http.StatusInternalServerError)})
 	} else {
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result, "Total": count})
+		res := make([]M.Message, 0)
+		randlist := r.Perm(len(result))[:3]
+		for index := range randlist {
+			res = append(res, result[randlist[index]])
+		}
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": res, "Total": count})
+	}
+}
+
+func GetNew(c *gin.Context) {
+	Mid := c.Param("mid")
+	result := &M.Message{}
+	err := M.Messages().FindId(bson.ObjectIdHex(Mid)).One(&result)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
+			"msg": http.StatusText(http.StatusInternalServerError)})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result})
 	}
 }

@@ -23,7 +23,8 @@ func RegisterRouter(router *gin.Engine) {
 	Auth_V1.POST("/person/add", ApiRoute.CreatePerson)
 	Auth_V1.GET("/userinfo", ApiRoute.GetUserInfo)
 	Auth_V1.GET("/persons", ApiRoute.GetPersonList)
-	V1.GET("/news/:skip/:limit", ApiRoute.GetNews)
+	Auth_V1.GET("/news/:skip/:limit", ApiRoute.GetNews)
+	Auth_V1.GET("/new/:mid", ApiRoute.GetNew)
 
 	//ignore auth
 	NotAuth_V1 := V1.Group("/")
