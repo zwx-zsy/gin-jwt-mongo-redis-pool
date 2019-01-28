@@ -179,7 +179,7 @@ func SetPerson(c *gin.Context) {
 	claims, _ := Lib.GetPayLoad(c)
 	var PersonP PersonIdP
 	if e := c.ShouldBindJSON(&PersonP); e == nil {
-		e := M.Users().Update(bson.M{"WxOpenId": claims.Payload.OpenId}, bson.M{"PersonId": PersonP.PersonId})
+		e := M.Users().Update(bson.M{"WxOpenId": claims.Payload.OpenId}, bson.M{"$set": bson.M{"PersonId": PersonP.PersonId}})
 		if e != nil {
 			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": PersonP.PersonId})
 		} else {
