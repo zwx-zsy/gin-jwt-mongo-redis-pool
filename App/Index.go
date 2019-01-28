@@ -170,3 +170,24 @@ func GetNew(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result})
 	}
 }
+
+type PersonIdP struct {
+	PersonId string `json:"person_id" binding:"required"`
+}
+
+func SetPerson(c *gin.Context) {
+	claims, _ := Lib.GetPayLoad(c)
+	var PersonP PersonIdP
+	if e := c.ShouldBindJSON(&PersonP); e == nil {
+		e := M.Users().Update(bson.M{"WxOpenId": claims.Payload.OpenId}, bson.M{"PersonId": PersonP.PersonId})
+		if e != nil {
+			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": PersonP.PersonId})
+		} else {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
+				"msg": http.StatusText(http.StatusInternalServerError)})
+		}
+	} else {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": e.Error()})
+	}
+
+}
