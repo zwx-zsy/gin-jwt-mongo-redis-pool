@@ -136,3 +136,18 @@ func GetPersonList(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result, "Total": len(result)})
 	}
 }
+
+func GetNews(c *gin.Context) {
+	skip, _ := strconv.Atoi(c.Param("skip"))
+	limit, _ := strconv.Atoi(c.Param("limit"))
+	result := []M.Message{}
+	count, _ := M.Messages().Count()
+	err := M.Messages().Find(bson.M{}).Skip(skip).Limit(limit).All(&result)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
+			"msg": http.StatusText(http.StatusInternalServerError)})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result, "Total": count})
+	}
+}
