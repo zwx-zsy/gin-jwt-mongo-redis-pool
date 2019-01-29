@@ -11,8 +11,6 @@ const (
 	CONFKEY string = "Config" //配置文件的key
 )
 
-//yaml的结构
-
 //start
 type Yaml struct {
 	ConfigKey string  `yaml:"ConfigKey"`

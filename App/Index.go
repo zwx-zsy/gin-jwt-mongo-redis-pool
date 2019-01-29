@@ -36,6 +36,7 @@ func GetGrowthStandards(c *gin.Context) {
 	}
 }
 
+//创建宝宝
 func CreatePerson(ctx *gin.Context) {
 	claims, _ := Lib.GetPayLoad(ctx)
 	var PersonP PersonParam
@@ -77,6 +78,8 @@ type Users M.User
 func (t Users) String() string {
 	return fmt.Sprintf("学号: %s\n真实姓名: %s\n年龄: %s\n", t.PersonId, t.WxOpenId, t.Id)
 }
+
+//获取当前用户的信息包括绑定的宝宝
 func GetUserInfo(c *gin.Context) {
 	claims, err := Lib.GetPayLoad(c)
 	if !err {
@@ -129,6 +132,7 @@ func GetUserInfo(c *gin.Context) {
 
 }
 
+//获取宝宝列表
 func GetPersonList(c *gin.Context) {
 	claims, _ := Lib.GetPayLoad(c)
 	result := []M.Person{}
@@ -141,6 +145,7 @@ func GetPersonList(c *gin.Context) {
 	}
 }
 
+//获取资讯列表
 func GetNews(c *gin.Context) {
 	skip, _ := strconv.Atoi(c.Param("skip"))
 	limit, _ := strconv.Atoi(c.Param("limit"))
@@ -163,6 +168,7 @@ func GetNews(c *gin.Context) {
 	}
 }
 
+//获取单个资讯内容
 func GetNew(c *gin.Context) {
 	Mid := c.Param("mid")
 	result := &M.Message{}
@@ -175,10 +181,12 @@ func GetNew(c *gin.Context) {
 	}
 }
 
+//请求参数
 type PersonIdP struct {
 	PersonId string `json:"person_id" binding:"required"`
 }
 
+//修改绑定宝宝
 func SetPerson(c *gin.Context) {
 	claims, _ := Lib.GetPayLoad(c)
 	var PersonP PersonIdP
