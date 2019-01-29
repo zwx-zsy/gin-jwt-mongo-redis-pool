@@ -1,1 +1,1 @@
-[GIN] 2019/01/28 - 20:22:44 | 200 |   39.246532ms |       127.0.0.1 | POST     /api/v1/updateperson
+[GIN] 2019/01/29 - 10:40:43 | 200 |   36.497274ms |       127.0.0.1 | POST     /api/v1/updateperson

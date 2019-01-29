@@ -185,10 +185,10 @@ func SetPerson(c *gin.Context) {
 	if e := c.ShouldBindJSON(&PersonP); e == nil {
 		e := M.Users().Update(bson.M{"WxOpenId": claims.Payload.OpenId}, bson.M{"$set": bson.M{"PersonId": PersonP.PersonId}})
 		if e != nil {
-			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": PersonP.PersonId})
-		} else {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
 				"msg": http.StatusText(http.StatusInternalServerError)})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": PersonP.PersonId})
 		}
 	} else {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"code": http.StatusPaymentRequired, "msg": e.Error()})
