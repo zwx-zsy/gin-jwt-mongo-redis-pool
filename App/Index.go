@@ -25,8 +25,9 @@ func GetGrowthStandards(c *gin.Context) {
 	// 获取成长标准说明
 	skip, _ := strconv.Atoi(c.Param("skip"))
 	limit, _ := strconv.Atoi(c.Param("limit"))
+	born, _ := strconv.Atoi(c.Param("born"))
 	gs := []M.GrowthStandard{}
-	e := M.GrowthStandards().Find(nil).Sort("Type", "Days").Skip(skip).Limit(limit).All(&gs)
+	e := M.GrowthStandards().Find(bson.M{"Type": born}).Sort("Days").Skip(skip).Limit(limit).All(&gs)
 
 	if e != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError,
