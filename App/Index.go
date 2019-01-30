@@ -59,7 +59,8 @@ func CreatePerson(ctx *gin.Context) {
 				defer M.Rollback(M.CollectionName_Person, result.Id)
 				ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": http.StatusInternalServerError, "msg": err.Error()})
 			} else {
-				ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": ups.UpsertedId})
+				fmt.Println(ups.Updated)
+				ctx.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "msg": "success", "data": result.Id.Hex()})
 			}
 		}
 	} else {
