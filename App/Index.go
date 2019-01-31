@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/mgo.v2/bson"
+	"math"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -42,6 +43,11 @@ func CreatePerson(ctx *gin.Context) {
 	claims, _ := Lib.GetPayLoad(ctx)
 	var PersonP PersonParam
 	if err := ctx.ShouldBindJSON(&PersonP); err == nil {
+		if PersonP.Role > 10 {
+			i := float64(PersonP.Role / 10)
+			floor := math.Floor(i)
+			PersonP.Role = int(floor) + 1
+		}
 		result := M.Person{Id: bson.NewObjectId(), NickName: PersonP.NickName,
 			Sex: PersonP.Sex, Birthday: PersonP.Birthday, Born: PersonP.Born, Role: PersonP.Role, OpenId: claims.Payload.OpenId, CreateDateTime: time.Now()}
 		err := M.Persons().Insert(&result)
